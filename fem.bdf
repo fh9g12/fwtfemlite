@@ -4,12 +4,12 @@ $ This program is free software: you can redistribute it and/or modify
 $ it under the terms of the GNU General Public License as published by
 $ the Free Software Foundation, either version 3 of the License, or
 $ (at your option) any later version.
-$ 
+$
 $ This program is distributed in the hope that it will be useful,
 $ but WITHOUT ANY WARRANTY; without even the implied warranty of
 $ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 $ GNU General Public License for more details.
-$ 
+$
 $ You should have received a copy of the GNU General Public License
 $ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
@@ -17,7 +17,7 @@ $ FEM of WINDY Wind Tunnel Model fitted with the 'Lite' Folding Wingtip
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ Created: R Cheung
 $ Contact: r.c.m.cheung@bristol.ac.uk
-$ Modified: 11 June 2020
+$ Modified: 08 December 2020
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ Main FEM
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
@@ -149,32 +149,12 @@ CONM2    1095    55      0      .040     .0365    0.     0.
 CONM2    1096    66      0      .040     .0365    0.     0.
 CONM2    1097    77      0      .040     .0365    0.     0.
 CONM2    1098    88      0      .040     .0365    0.     0.
-
-$CONM2    1191    11      0      .000     .0       0.     0.
-$CONM2    1192    22      0      .000     .0       0.     0.
-$CONM2    1193    33      0      .000     .0       0.     0.
-$CONM2    1195    55      0      .000     .0       0.     0.
-$CONM2    1194    44      0      .000     .0       0.     0.
-$CONM2    1196    66      0      .000     .0       0.     0.
-$CONM2    1197    77      0      .000     .0       0.     0.
-$CONM2    1198    88      0      .000     .0       0.     0.
 $ cable @ hingeIB
 CONM2    1099    400     0      .040     .0365    0.     0.
 CONM2    1199    400     0      .106     .0       0.     0.
 $ cable @ hingeOB
 CONM2    1100    401     0      .010     .0365    0.     0.
 CONM2    1200    401     0      .006     .0       0.     0.
-
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$ Old tuning
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$MAT1     3      185.0+6         .3      0.
-$PBEAML   3       3               BAR
-$         .0343   .0245
-$PBEAML   4       3               BAR
-$         .034    .0265
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ Material Record : hingeSect
 $ Description of Material : psuedo material for wing sections around the hinge
@@ -548,7 +528,6 @@ GRID*    151                            -.037500001490111.34500002861023
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ wing-tip
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$INCLUDE 'servowingtip.bdf'
 INCLUDE 'litewingtip.bdf'
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ Hinge Mechanism
@@ -574,25 +553,3 @@ PBUSH    3       K                              1.0-5
 $ Pset: "torsionSpring" will be imported as: "pbush.3"
 CBUSH    103     3       112     209     0.      0.     1.
 CBUSH    104     3       113     209     0.      0.     1.
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$ hinge lock
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$RBE2,300,208,123456,209
-$ INCLUDE 'hingelock.bdf'
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$ Aerodynamics
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$ AERO    0       18.0    .15     1.226
-$ AEROS   0       0       .15     1.345   .20175
-$ INCLUDE 'aero.bdf'
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$ Spring for representing finite stiffness of the root fixture
-$ SPC = 101
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$ INCLUDE 'rootSpring.bdf'
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$ SPC & Loads
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$ Displacement Constraints of Load Set : root
-$ SPC1     1       123456  1
-$ ENDDATA
