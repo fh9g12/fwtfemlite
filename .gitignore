@@ -1,0 +1,6 @@
+*.log
+*.db
+*.rej
+*.jou
+*.f0*
+*.xdb
