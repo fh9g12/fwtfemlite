@@ -536,30 +536,14 @@ $ Outboard hinge connection: 209
 $ Tip of wing-tip: 221
 $ connection from inboard to pin holder
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
-
 GRID    208     2       0.      0.      0.      2
 GRID    209     2       0.      0.      0.      2
 $ Hinge Definition:
 RJOINT  251     208     209     12356
 CBUSH   103     3       208     209                             2
 $ Elements and Element Properties for region : torsionSpring
-PBUSH    3      K                               2.0-5
+PBUSH    3      K                               1.E-4
 $ Pset: "torsionSpring" will be imported as: "pbush.3"
 
-$ FWT Coordinate Frames
-$ wingtip coord frame
-$-------2---------------3---------------4---------------5---------------T
-CORD2R* 1               0               0.              1.00651180744171
-*       0.              0.              1.006511807441711.
-*       1.              1.006511807441710.
-*
-$ hinge frame
-CORD2R* 2                               0.              1.00651180744171
-*       0.              0.              1.006511807441711.
-*       1.              .8302           0.
-*
-$ wingtip aero frame
-CORD2R* 3               0               0.              1.00651180744171
-*       0.              0.              1.006511807441711.
-*       1.              1.006511807441710.
-*
+INCLUDE 'fwt_coord.bdf'
+INCLUDE 'fwt_twist.bdf'
