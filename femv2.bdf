@@ -22,12 +22,7 @@ $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ Main FEM
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 
-$ FWT Referenced Coordinate Frames
-$-------2---------------3---------------4---------------5---------------T
-CORD2R* 1               0               0.              1.00651180744171
-*       0.              0.              1.006511807441711.
-*       1.              1.006511807441710.
-*
+$ Hinge reference frame
 $ Elements and Element Properties for region : wingBeam
 PBEAML   1       1               BAR
         .03     .005
@@ -450,10 +445,6 @@ GRID*    97                              0.             .864000022411346
 GRID*    98                              0.             .869499981403351
 *        0.
 GRID     99              0.     .875     0.
-GRID*    208                             0.             1.00651180744171
-*        0.
-GRID*    209             1               0.             0.
-*        0.
 GRID*    221             1               0.             0.34500002861023
 *        0.
 GRID*    114                            -.03750000149011.033500000834465
@@ -545,21 +536,25 @@ $ Outboard hinge connection: 209
 $ Tip of wing-tip: 221
 $ connection from inboard to pin holder
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
-RBE2     303     208     123456  112     113
-GRID*   112             0               0.009848076850  1.0047752857208
-*       0.
-GRID*   113             0               -0.009848076850 1.0082483291626
-*       0.
-$ Elements and Element Properties for region : hingePin
-PBEAML   2       2               ROD
-        .0015
-$ Pset: "hingePin" will be imported as: "pbeaml.2"
-CBEAM    101     2       112     209     0.      0.     1.
-         4
-CBEAM    102     2       113     209     0.      0.     1.
-         4
+
+GRID    208     2       0.      0.      0.      2
+GRID    209     2       0.      0.      0.      2
+$ Hinge Definition:
+RJOINT  251     208     209     12356
+CBUSH   103     3       208     209                             2
 $ Elements and Element Properties for region : torsionSpring
-PBUSH    3       K                              1.0-5
+PBUSH    3      K                               2.0-5
 $ Pset: "torsionSpring" will be imported as: "pbush.3"
-CBUSH    103     3       112     209     0.      0.     1.
-CBUSH    104     3       113     209     0.      0.     1.
+
+$ FWT Coordinate Frames
+$ wingtip coord frame
+$-------2---------------3---------------4---------------5---------------T
+CORD2R* 1               0               0.              1.00651180744171
+*       0.              0.              1.006511807441711.
+*       1.              1.006511807441710.
+*
+$ hinge frame
+CORD2R* 2                               0.              1.00651180744171
+*       0.              0.              1.006511807441711.
+*       1.              .8302           0.
+*
