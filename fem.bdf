@@ -543,7 +543,4 @@ RJOINT  251     208     209     12356
 CBUSH   103     3       208     209                             2
 $ Elements and Element Properties for region : torsionSpring
 PBUSH    3      K                               1.E-4
-$ Pset: "torsionSpring" will be imported as: "pbush.3"
-
 INCLUDE 'fwt_coord.bdf'
-INCLUDE 'fwt_twist.bdf'

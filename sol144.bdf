@@ -17,7 +17,10 @@ $ FEM of WINDY Wind Tunnel Model fitted with the 'Lite' Folding Wingtip
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ Created: R Cheung
 $ Contact: r.c.m.cheung@bristol.ac.uk
-$ Modified: 08 December 2020
+$ Date: 08 December 2020
+$
+$ Change Log:
+$ 08 February 2021 - (Fintan Healy) udpadated to 'deformable model'
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 NASTRAN NLINES=999999
 $ STATIC AEROELASTIC ANALYSIS
@@ -46,11 +49,17 @@ PARAM,WTMASS,1.
 PARAM,SNORM,20.
 PARAM,PRTMAXIM,YES
 MDLPRM,HDF5,0
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ Gravity
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 GRAV    11      0       9.81    0.0     0.0     -1.0
+$ SPC (wing fixed at the root)
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
+SPCADD  3       2
+SPC     2       1       123456
+$ Eigen Decomposition Method
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+EIGR    10      MGIV                            8
+        MAX
 $ FEM
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 INCLUDE 'fem.bdf'
@@ -58,18 +67,9 @@ $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ Hinge lock - comment out for free-hinge config.
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ INCLUDE 'hingelock.bdf'
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-$ SPC
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
-SPCADD  3       2
-SPC     2       1       123456
-$-------2-------3-------4-------5-------6-------7-------8-------9-------T
 $ Aero
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 INCLUDE 'aero.bdf'
 AEROS   0       0       .15     1.345   .20175
-TRIM,1,0.052941,198.450000,ANGLEA,0.087266,SIDES,0.
- ,ROLL ,0.,PITCH,0.,YAW  ,0.,URDD1,0.
- ,URDD2,0.,URDD3,0.,URDD4,0.,URDD5,0.
- ,URDD6,0.
+INCLUDE 'trim.bdf'
 ENDDATA
