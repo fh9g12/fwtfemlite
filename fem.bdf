@@ -540,7 +540,7 @@ GRID    208     2       0.      0.      0.      2
 GRID    209     2       0.      0.      0.      2
 $ Hinge Definition:
 RJOINT  251     208     209     12356
-CBUSH   103     3       208     209                             2
+CBUSH   103     13      208     209                             2
 $ Elements and Element Properties for region : torsionSpring
-PBUSH    3      K                               1.E-4
+PBUSH   13      K                               1.E-4
 INCLUDE 'fwt_coord.bdf'
