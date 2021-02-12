@@ -10,24 +10,22 @@ classdef fwt_coords
     end
     
     methods
-        function obj = fwt_coords(fold_angle,flare_angle,origin)
+        function obj = fwt_coords(fold_angle,flare_angle,origin,root_aoa)
             %FWT_COORDS Construct an instance of this class
             %   Detailed explanation goes here
             obj.fold_angle = fold_angle;
             obj.flare_angle = flare_angle;
             obj.origin = origin;
+            obj.root_aoa = root_aoa;
         end
         
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            
+            %   Detailed explanation goes here         
             awi.fe.FEBaseClass.writeFileStamp(fid);
-            %awi.fe.FEBaseClass.writeComment(fid,'this file contain the trim card for a 144 solution')
             awi.fe.FEBaseClass.writeColumnDelimiter(fid,'8');
     
-            elements = obj.gen_elements();
-            
+            elements = obj.gen_elements();            
             
             for i = 1:length(elements)
                 elements{i}.writeToFile(fid,1)
@@ -36,19 +34,23 @@ classdef fwt_coords
         
         function elements = gen_elements(obj)
             % create transformation matricies
-            hinge_rot_m = roty(obj.root_aoa)*rotz(-obj.flare_angle);
+            wing_rot_m = roty(obj.root_aoa);
+            hinge_rot_m = wing_rot_m*rotz(-obj.flare_angle);
             fwt_rot_m = hinge_rot_m*rotx(obj.fold_angle)*rotz(obj.flare_angle);
             aero_fwt_rot_m = rotx(obj.fold_angle);
             
             % create alena coord systems
+            C_wing = awi.model.CoordSys('Origin',[0 0 0],'RMatrix',wing_rot_m);
             C_wingtip = awi.model.CoordSys('Origin',obj.origin,'RMatrix',fwt_rot_m);
             C_hinge = awi.model.CoordSys('Origin',obj.origin,'RMatrix',hinge_rot_m);
             C_aero = awi.model.CoordSys('Origin',obj.origin,'RMatrix',aero_fwt_rot_m);
             
             % convert to fem coord systems
-            fem_C_wingtip = obj.awi_coord_2_fe(C_wingtip,1);
-            fem_C_hinge = obj.awi_coord_2_fe(C_hinge,2);
-            fem_C_aero = obj.awi_coord_2_fe(C_aero,3);
+            fem_C_wing = obj.awi_coord_2_fe(C_wing,1);
+            fem_C_wingtip = obj.awi_coord_2_fe(C_wingtip,2);
+            fem_C_hinge = obj.awi_coord_2_fe(C_hinge,3);
+            fem_C_aero = obj.awi_coord_2_fe(C_aero,4);
+            
             
             % generate twist on wingtip
             DMI = awi.fe.DMI();
@@ -59,7 +61,8 @@ classdef fwt_coords
                 ones(150,1)*local_aoa+rad_root_aoa*cosd(obj.fold_angle)];
             
             % return elements
-            elements = [{fem_C_wingtip},{fem_C_hinge},{fem_C_aero},{DMI}];
+            elements = [{fem_C_wing},{fem_C_wingtip},...
+                {fem_C_hinge},{fem_C_aero},{DMI}];
         end
     end
     

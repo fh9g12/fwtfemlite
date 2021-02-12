@@ -38,8 +38,7 @@ function f_data = get_flutter_data(fold_angle,flare_angle,origin,root_aoa)
     flut_file = 'C:\Git\fwtfemlite\flutter.bdf';
     %create coords file
     fid = fopen('C:\Git\fwtfemlite\fwt_coord.bdf','w+');
-    coords = fwt_coords(fold_angle,flare_angle,origin);
-    coords.root_aoa = root_aoa;
+    coords = fwt_coords(fold_angle,flare_angle,origin,root_aoa);
     coords.writeToFile(fid)
     fclose(fid);
 

@@ -1,11 +1,12 @@
 addpath('C:\Git\nastran_import_tool\f06')
 
 % parameters
-fold_angle = 0;
+fold_angle = 10;
 flare_angle = 10;
 origin = [0,1.00651180744171,0];
+root_aoa = 10;
 
-flut_data = get_flutter_data(fold_angle,flare_angle,origin);
+flut_data = get_flutter_data(fold_angle,flare_angle,origin,10);
 
 for i = 1:length(flut_data)
         flut_data(i).FOLD = fold_angle;
@@ -16,14 +17,13 @@ clf;
 plot_flutter(flut_data,0,1,3)
 get_flutter_speed(flut_data)
 
-function f_data = get_flutter_data(fold_angle,flare_angle,origin)
+function f_data = get_flutter_data(fold_angle,flare_angle,origin,root_aoa)
     flut_file = 'C:\Git\fwtfemlite\flutter.bdf';
     %create coords file
-    fid = fopen('C:\Git\fwtfemlite\fwt_coord_45.bdf','w+');
-    coords = fwt_coords(fold_angle,flare_angle,origin);
-    coords.root_aoa = 0;
+    fid = fopen('C:\Git\fwtfemlite\fwt_coord.bdf','w+');
+    coords = fwt_coords(fold_angle,flare_angle,origin,root_aoa);
     coords.writeToFile(fid)
-    fclose(fid)
+    fclose(fid);
 
     %create flutter points
     Vs = linspace(5,35,15);
@@ -41,7 +41,6 @@ function f_data = get_flutter_data(fold_angle,flare_angle,origin)
 end
 
 function fs = get_flutter_speed(flut_data)
-    flut_data = read_f06_flutter('','sol145');
     fs = inf;    
     for i = 1:2
         tmp_fs = find_crossing(flut_data(i).V,flut_data(i).D);
