@@ -26,15 +26,27 @@ classdef BaseCard
             for i = 1:length(format)
                 switch format(i)
                     case 's'
-                        str = [str,sprintf('%-8s',data{data_index})];
+                        if isempty(data{data_index})
+                            str = [str,sprintf('%-8s','')];
+                        else
+                            str = [str,sprintf('%-8s',data{data_index})];                           
+                        end
                         data_index = data_index + 1;
                         column_count = column_count + 1;
                     case 'i'
-                        str = [str,sprintf('%-8i',data{data_index})];
+                        if isempty(data{data_index})
+                            str = [str,sprintf('%-8s','')];
+                        else
+                            str = [str,sprintf('%-8i',data{data_index})];                           
+                        end                 
                         data_index = data_index + 1;
                         column_count = column_count + 1;
                     case 'f'
-                        str = [str, awi.fe.FEBaseClass.num2nasSFFstr(data{data_index})];
+                        if isempty(data{data_index})
+                            str = [str,sprintf('%-8s','')];
+                        else
+                            str = [str, awi.fe.FEBaseClass.num2nasSFFstr(data{data_index})];                          
+                        end 
                         data_index = data_index + 1;
                         column_count = column_count + 1;
                     case 'b'

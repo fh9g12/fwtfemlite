@@ -1,11 +1,12 @@
 $ File information
 $
-$	- Created on  : 5-Feb-2021 16:12:58
+$	- Created on  : 25-Feb-2021 11:47:05
 $	- Created by  : qe19391 (IT076600)
 $	- Matlab ver  : 9.6.0.1072779 (R2019a)
 $	- ALENA ver   : v0
+$ this file contain the trim card for a 144 solution
 $.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
-TRIM    1       .0408635120.05  ANGLEA  0.      SIDES   0.              
+TRIM    1       .036485378.125  ANGLEA  0.      SIDES   0.              
         ROLL    0.      PITCH   0.      YAW     0.      URDD1   0.      
         URDD2   0.      URDD3   0.      URDD4   0.      URDD5   0.      
         URDD6   0.      
