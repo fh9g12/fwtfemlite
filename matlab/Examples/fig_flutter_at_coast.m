@@ -14,18 +14,19 @@ clf;
 lineStyles = {'-','--','-.',':','-o'};
 for a_i = 1:length(aoas)
     tmp_idx = [flut_data.root_aoa] == aoas(a_i);
-    plotting.plot_flutter(flut_data(tmp_idx),0,1,2,lineStyles{a_i})
-    get_flutter_speed(flut_data)
+    plotting.plot_flutter(mode_tracking(flut_data(tmp_idx),2),0,1,2,...
+        'LineStyle',lineStyles{a_i},'DisplayName',sprintf('%.1f AoA',aoas(a_i)))
+    get_flutter_speed(flut_data);
 end
 % parameters
 subplot(2,1,1)
+legend('location','southeast')
 %grid minor
 subplot(2,1,2)
 ylim([-1, 1])
 %grid minor
 
 %% functions
-
 function idx = is_con(x)
     idx = false;
     if ischar(x{1}) && strcmp(x{1},'con')

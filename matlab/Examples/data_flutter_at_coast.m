@@ -43,7 +43,7 @@ clf;
 lineStyles = {'-','--','-.',':','-o'};
 for a_i = 1:length(aoas)
     tmp_idx = [flut_data.root_aoa] == aoas(a_i);
-    plotting.plot_flutter(flut_data(tmp_idx),0,1,2,lineStyles{a_i})
+    plotting.plot_flutter(mode_tracking(flut_data(tmp_idx),6),0,1,2,lineStyles{a_i})
     get_flutter_speed(flut_data)
 end
 % parameters
