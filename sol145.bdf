@@ -43,7 +43,7 @@ SUBCASE 1
   SPC=3
   FMETHOD = 4
   METHOD = 10
-  LOAD=11
+  LOAD=10
 BEGIN BULK
 PARAM,POST,-2
 PARAM,WTMASS,1.
@@ -53,6 +53,7 @@ MDLPRM,HDF5,0
 $ Gravity
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 GRAV    11      0       9.81    0.0     0.0     -1.0
+LOAD    10      1.      1.      11      1.      12
 $ SPC (wing fixed at the root)
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 SPCADD  3       2
