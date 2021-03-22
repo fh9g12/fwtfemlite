@@ -7,33 +7,50 @@ flare_angle = 10;
 
 % load coast data
 load('coast_flut_data.mat','flut_data');
+load('coast_lin_flut_data.mat','lin_flut_data');
 aoas = unique([flut_data.root_aoa]);
+
+% %% fix modes
+% for a_i = 1:length(aoas)
+%     tmp_idx = [flut_data.root_aoa] == aoas(a_i);
+%     flut_data(tmp_idx) = mode_tracking(flut_data(tmp_idx),2);
+% end
+% save('coast_flut_data_v2.mat','flut_data')
+
 %% plot the data
 figure(2)
 clf;
+
+% plot linear results
+tmp_idx = [flut_data.root_aoa] == 0;
+plotting.plot_flutter(lin_flut_data(tmp_idx),0,1,2,'LineStyle','-',...
+    'Colors',repmat([0.1,0.3,0.2],2,1),...
+    'DisplayName','Linear Model','LineWidth',2)
+
 lineStyles = {'-','--','-.',':','-o'};
 for a_i = 1:length(aoas)
     tmp_idx = [flut_data.root_aoa] == aoas(a_i);
-    plotting.plot_flutter(mode_tracking(flut_data(tmp_idx),2),0,1,2,...
-        'LineStyle',lineStyles{a_i},'DisplayName',sprintf('%.1f AoA',aoas(a_i)))
+    plotting.plot_flutter(flut_data(tmp_idx),0,1,2,...
+        'LineStyle',lineStyles{a_i},...
+        'DisplayName',sprintf('%.1f AoA',aoas(a_i)),...
+        'LineWidth',1.5)
     get_flutter_speed(flut_data);
 end
+
 % parameters
 subplot(2,1,1)
 legend('location','southeast')
+grid minor
 %grid minor
 subplot(2,1,2)
-ylim([-1, 1])
+ylim([-50, 50])
+grid minor
 %grid minor
 
-%% functions
-function idx = is_con(x)
-    idx = false;
-    if ischar(x{1}) && strcmp(x{1},'con')
-            idx  = true;
-    end
-end
 
+
+
+%% functions
 function fs = get_flutter_speed(flut_data)
     fs = inf;    
     for i = 1:2

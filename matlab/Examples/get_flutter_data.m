@@ -1,10 +1,11 @@
-function f_data = get_flutter_data(fold_angle,flare_angle,origin,root_aoa,Vs)
-    flut_file = 'C:\Git\fwtfemlite\flutter.bdf';
+function f_data = get_flutter_data(fold_angle,twist_angle,flare_angle,origin,root_aoa,Vs)
+    model_dir = 'C:\Git\fwtfemlite\';
     % write the model 
-    gen.write_WT_model(fold_angle,flare_angle,origin,root_aoa,true);
+    wt_model = gen.WT_model(fold_angle,twist_angle,flare_angle,origin,root_aoa);
+    wt_model.writeToFile(model_dir,'GravStiffness',true)
 
     %create flutter points
-    gen.write_flutter(flut_file,1,0,Vs)
+    gen.write_flutter([model_dir,'flutter.bdf'],1,0,Vs)
     
     % delete old files
     delete('sol1*.*')
@@ -21,6 +22,7 @@ function f_data = get_flutter_data(fold_angle,flare_angle,origin,root_aoa,Vs)
     % append fold angle and root AoA
     for j = 1:length(f_data)
             f_data(j).FOLD = fold_angle;
+            f_data(j).TWIST = twist_angle;
             f_data(j).AoA = root_aoa;     
     end
 end

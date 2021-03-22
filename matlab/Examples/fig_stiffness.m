@@ -4,12 +4,12 @@ addpath('C:\Git\nastran_import_tool\f06')
 % parameters
 flare_angle = 10;
 origin = [0,1.00651180744171,0];
-root_aoa = 10;
-V = 15;
+root_aoa = 0;
+V = 2;
 
 
 %% compute predicted fold angles
-fold_angles = -1*[30:0.5:50];
+fold_angles = 1*[-95:-80];
 res = zeros(size(fold_angles));
 for a_i = 1:length(fold_angles)
     flut_data = get_trim_data(fold_angles(a_i),flare_angle,origin,root_aoa,V);

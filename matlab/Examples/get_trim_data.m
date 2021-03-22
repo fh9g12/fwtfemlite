@@ -1,10 +1,16 @@
-function data = get_trim_data(fold_angle,flare_angle,origin,root_aoa,V)
-    trim_file = 'C:\Git\fwtfemlite\trim.bdf';
+function [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,...
+    flare_angle,origin,root_aoa,V,varargin)
+    p=inputParser();
+    p.addParameter('Locked',false);
+    p.parse(varargin{:});
+    model_dir = 'C:\Git\fwtfemlite\';
     % write the model 
-    gen.write_WT_model(fold_angle,flare_angle,origin,root_aoa,false);
+    wt_model = gen.WT_model(fold_angle,twist_angle,flare_angle,origin,root_aoa);
+    wt_model.Locked = p.Results.Locked;
+    wt_model.writeToFile(model_dir,'GravStiffness',true)
 
     %create trim cards
-    gen.write_trim(trim_file,1,V,0);
+    gen.write_trim([model_dir,'trim.bdf'],1,V,0);
     
     % delete old files
     delete('sol1*.*')
@@ -16,6 +22,10 @@ function data = get_trim_data(fold_angle,flare_angle,origin,root_aoa,V)
     system(command);
     
     %get Results
-    data = mni.result.f06.read_f06_disp('','sol144');
+    data_file = mni.result.f06('sol144.f06');
+    
+    data = data_file.read_disp;
+    p_data = data_file.read_aeroP;
+    f_data = data_file.read_aeroF;
 end
 
