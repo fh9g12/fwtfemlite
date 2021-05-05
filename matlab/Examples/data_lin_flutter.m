@@ -6,7 +6,7 @@ flare_angle = 10;
 
 
 % load coast data
-load('coast_data_v2.mat')
+load('coast_data_v7.mat')
 idx = arrayfun(@is_con,{data.state});
 con_data = data(idx);
 %% linear flutter data
@@ -14,7 +14,7 @@ lin_flut_data = get_flutter_res(data([data.guess]==1),flare_angle,...
     origin,'initial_fold','initial_twist');
 
 %% get flutter data
-save('coast_lin_flut_data.mat','lin_flut_data');
+save('coast_lin_flut_data_v2.mat','lin_flut_data');
 %% plot the data
 figure(2)
 clf;

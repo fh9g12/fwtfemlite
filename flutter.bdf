@@ -1,15 +1,13 @@
 $ File information
 $
-$	- Created on  : 9-Mar-2021 17:02:14
+$	- Created on  : 25-Mar-2021 22:58:43
 $	- Created by  : qe19391 (IT076600)
-$	- Matlab ver  : 9.6.0.1072779 (R2019a)
+$	- Matlab ver  : 9.9.0.1592791 (R2020b) Update 5
 $	- ALENA ver   : v0
 $ this file contain the flutter cards for a 145 solution
 $.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
 FLFACT  1       1.      
 FLFACT  2       0.      
-FLFACT  3       2.      4.      6.      8.      10.     12.     14.     
-        16.     18.     20.     22.     24.     26.     28.     30.     
-        32.     34.     36.     38.     40.     
+FLFACT  3       40.     
 $.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
 FLUTTER 4       PK      1       2       3       L       6       

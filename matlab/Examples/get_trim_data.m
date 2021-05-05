@@ -2,13 +2,23 @@ function [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,...
     flare_angle,origin,root_aoa,V,varargin)
     p=inputParser();
     p.addParameter('Locked',false);
+    p.addParameter('DragMoment',0);
+    p.addParameter('WingCamber',0);
+    p.addParameter('WingtipCamber',0);
+    p.addParameter('TunnelWalls',false);
+    p.addParameter('fwt_cl_factor',1);
     p.parse(varargin{:});
     model_dir = 'C:\Git\fwtfemlite\';
     % write the model 
     wt_model = gen.WT_model(fold_angle,twist_angle,flare_angle,origin,root_aoa);
     wt_model.Locked = p.Results.Locked;
-    wt_model.writeToFile(model_dir,'GravStiffness',true)
-
+    %wt_model.wing_camber = p.Results.WingtipCamber;
+    wt_model.wingtip_camber = p.Results.WingtipCamber;
+    wt_model.tunnel_walls = p.Results.TunnelWalls;
+    wt_model.wingtip_cl_correction = p.Results.fwt_cl_factor;
+    wt_model.writeToFile(model_dir,'GravStiffness',true,'DragMoment',...
+        p.Results.DragMoment)
+   
     %create trim cards
     gen.write_trim([model_dir,'trim.bdf'],1,V,0);
     

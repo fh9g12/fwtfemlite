@@ -7,24 +7,24 @@ initial_fold_angle = -90;
 flare_angle = 10;
 origin = [0,1.00651180744171,0];
 
-root_aoas = 2.5:2.5:10;
+root_aoas = (2.5:2.5:10)+1.5;
 Vs = 0:2:40;
 data = [];
 wb = waitbar(0,'Calculating coast angles');
 error_count = 0;
 for a_i = 1:length(root_aoas)
-    X = [initial_fold_angle,0];
+    X = [initial_fold_angle,0,0];
     for v_i = 1:length(Vs)      
 %         try
             waitbar(((a_i-1)*length(Vs)+v_i)/(length(root_aoas)*length(Vs)),wb,'Calculating coast angles');
             if Vs(v_i) == 0
-                f = @(x)get_fold_angle_V0(x(1),x(2),flare_angle,origin,root_aoas(a_i))-x;
+                f = @(x)get_fold_angle_V0(x,flare_angle,origin,root_aoas(a_i))-x;
             else
-                f = @(x)get_fold_angle(x(1),x(2),flare_angle,origin,root_aoas(a_i),Vs(v_i))-x;
+                f = @(x)get_fold_angle(x,flare_angle,origin,root_aoas(a_i),Vs(v_i))-x;
             end
                 
             data = [data,find_coast_angle(f,root_aoas(a_i),Vs(v_i),'IC',X)];
-            X = [data(end).fold_angle,data(end).twist_angle];
+            X = [data(end).fold_angle,data(end).twist_angle,data(end).drag];
 %         catch
 %             fprintf('Skipping root aoa: %.1f deg, V: %.1f m/s\n',root_aoas(a_i),Vs(v_i));
 %         end
@@ -68,22 +68,24 @@ end
 
 function data = find_coast_angle(f,root_aoa,V,varargin)
     p = inputParser();
-    p.addParameter('IC',[-90,0]);
+    p.addParameter('IC',[-90,0,0]);
     p.addParameter('MaxIter',50);
     p.parse(varargin{:});
     data = [];
     
-    % add zero fold point to data   
-    data = append_guess_data(data,[0,0,f([0,0])],root_aoa,V);
+    % add zero fold point to data
+    zero_IC = zeros(size(p.Results.IC));
+    data = append_guess_data(data,[zero_IC,f(zero_IC)],root_aoa,V);
     
-    current_guesses = @(x)[[x.initial_fold]',[x.initial_twist]',...
-        [x.fold_angle]'-[x.initial_fold]',[x.twist_angle]'-[x.initial_twist]'];
+    current_guesses = @(x)[[x.initial_fold]',[x.initial_twist]',[x.initial_drag]'...
+        [x.fold_angle]'-[x.initial_fold]',[x.twist_angle]'-[x.initial_twist]',...
+        [x.drag]'-[x.initial_drag]'];
        
     % check if initial answer gives a result close enough (e.g. in the 
     % 'linear' range) to use the simple algothrim of using the last answer 
     % as the next guess
     if data(1).fold_angle > -30
-        [~,cross_data] = fmincon_coast(f,[data(1).fold_angle,data(1).twist_angle],...
+        [~,cross_data] = fmincon_coast(f,[data(1).fold_angle,data(1).twist_angle,data(1).drag],...
             'MaxIter',p.Results.MaxIter,'Xtol',0.1,'Ytol',0.1,...
             'Lookup',current_guesses(data));
     else
@@ -92,7 +94,7 @@ function data = find_coast_angle(f,root_aoa,V,varargin)
         % the bracket, if it is find a suitable bracket
         data = append_guess_data(data,[IC,f(IC)],root_aoa,V);
         % search bracket for zero crossing
-        [~,cross_data] = fmincon_coast(f,[data(end).fold_angle,data(end).twist_angle],...
+        [~,cross_data] = fmincon_coast(f,[data(end).fold_angle,data(end).twist_angle,data(end).drag],...
             'MaxIter',p.Results.MaxIter,'Xtol',0.1,'Ytol',0.1,...
             'Lookup',current_guesses(data));
     end
@@ -109,15 +111,15 @@ function [res,guesses] = fmincon_coast(f,ic,varargin)
     p.addParameter('MaxIter',20);
     p.addParameter('Xtol',1e-2);
     p.addParameter('Ytol',1e-2);
-    p.addParameter('Lookup',[],@(x) size(x,2)==4)
+    p.addParameter('Lookup',[],@(x) size(x,2)==6)
     p.parse(f,ic,varargin{:})
        
-    guesses = [ones(p.Results.MaxIter,4)*NaN;p.Results.Lookup];
+    guesses = [ones(p.Results.MaxIter,6)*NaN;p.Results.Lookup];
     
     function y = f_lookup(x)
-        f_i = find(guesses(:,1)==x(1) & guesses(:,2)==x(2) );
+        f_i = find(guesses(:,1)==x(1) & guesses(:,2)==x(2) & guesses(:,3)==x(3) );
         if ~isempty(f_i)
-            y = guesses(f_i(1),3:4);
+            y = guesses(f_i(1),4:6);
             return
         end
         y = f(x);
@@ -126,10 +128,10 @@ function [res,guesses] = fmincon_coast(f,ic,varargin)
     guesses(1,:) = [ic,f_lookup(ic)];
     for i = 2:p.Results.MaxIter
         gain = 1;
-        if abs(guesses(i-1,3))>20
+        if abs(guesses(i-1,4))>20
             gain=0.5;
         end
-        tmp_x = guesses(i-1,1:2) + gain .* p.Results.Gain .* guesses(i-1,3:4);
+        tmp_x = guesses(i-1,1:3) + gain .* p.Results.Gain .* guesses(i-1,4:6);
         tmp_y = f_lookup(tmp_x);
         guesses(i,:) = [tmp_x,tmp_y];
         if abs(tmp_y(1)) < p.Results.Ytol
@@ -144,8 +146,8 @@ function [res,guesses] = fmincon_coast(f,ic,varargin)
         guesses(end-size(p.Results.Lookup,1):end,:) = [];
     end
     guesses(isnan(guesses(:,1)),:) = [];
-    [~,i] = min(guesses(:,3));
-    res = guesses(i,1:2);   
+    [~,i] = min(guesses(:,4));
+    res = guesses(i,1:3);   
 end
 
 function data = append_guess_data(data,cross_data,root_aoa,V,varargin)
@@ -158,30 +160,38 @@ function data = append_guess_data(data,cross_data,root_aoa,V,varargin)
         data(end).V = V;
         data(end).guess = len+i+p.Results.i_offset;
         data(end).initial_fold = cross_data(i,1);
-        data(end).fold_angle = cross_data(i,3)+cross_data(i,1);
+        data(end).fold_angle = cross_data(i,4)+cross_data(i,1);
         data(end).initial_twist = cross_data(i,2);
-        data(end).twist_angle = cross_data(i,4)+cross_data(i,2);
+        data(end).twist_angle = cross_data(i,5)+cross_data(i,2);
+        data(end).initial_drag = cross_data(i,3);
+        data(end).drag = cross_data(i,6)+cross_data(i,3);
     end
 end
 
 
 
-function [res] = get_fold_angle(fold_angle,twist_angle,flare_angle,origin,root_aoa,V)
-    
+function [res] = get_fold_angle(X,flare_angle,origin,root_aoa,V)
+    fold_angle = X(1);
+    twist_angle = X(2);
     % get trim data
-    data = get_trim_data(fold_angle,twist_angle,flare_angle,origin,root_aoa,V);
+    data = get_trim_data(fold_angle,twist_angle,flare_angle,origin,root_aoa,...
+        V,'DragMoment',X(3),'WingtipCamber',0,'TunnelWalls',true,...
+        'fwt_cl_factor',1.12);
     
     %get fold angle
     res = get_fold_and_twist(data,fold_angle);
+    res(3) = get_drag_moment(fold_angle,twist_angle,flare_angle,origin,root_aoa,V);
 end
 
-function [res] = get_fold_angle_V0(fold_angle,twist_angle,flare_angle,origin,root_aoa)
-    
+function [res] = get_fold_angle_V0(X,flare_angle,origin,root_aoa)
+    fold_angle = X(1);
+    twist_angle = X(2);
     % get trim data
-    data = get_101_data(fold_angle,twist_angle,flare_angle,origin,root_aoa);
+    data = get_101_data(fold_angle,twist_angle,flare_angle,origin,root_aoa,false);
     
     %get fold angle
     res = get_fold_and_twist(data,fold_angle);
+    res(3) = 0;
 end
 
 function res = get_fold_and_twist(data,fold_angle)
@@ -189,5 +199,30 @@ function res = get_fold_and_twist(data,fold_angle)
     delta_fold = rad2deg(data.thX(data.GP == 209)) - twist_angle;
     fold_angle = fold_angle + delta_fold;
     res = [fold_angle,twist_angle];
+end
+
+function res = get_drag_moment(fold_angle,twist_angle,flare_angle,origin,root_aoa,V)
+    Ajj = op4ToMatrix('ajj.op4');
+    FFAj = op4ToMatrix('ffaj.op4');
+    res_aeroF = mni.result.f06('sol144.f06').read_aeroF;
+    
+    q = (0.5*1.225*V^2);
+    WJ = Ajj*(FFAj./q);
+    
+    panels = [10,15];
+    % get moment arm for each panel
+    xx = linspace(0,0.333849,panels(2)*2+1);
+    xx = xx(2:2:panels(2)*2)*cosd(flare_angle);
+    mom_arm = reshape(repmat(xx,panels(1),1),length(xx)*panels(1),[]);
+    
+    % get FWT surface normal
+    model = gen.WT_model(fold_angle,twist_angle,flare_angle,origin,root_aoa);
+    surface_normal = model.fwt_normal_vector();
+
+    %calc total drag moment
+    idx = 401:550;
+    fwt_drag = sin(WJ(idx)).*res_aeroF.aeroFz(idx)';
+    drag_mag = dot([1 0 0],surface_normal);
+    res = sum(fwt_drag.*drag_mag.*mom_arm);
 end
 

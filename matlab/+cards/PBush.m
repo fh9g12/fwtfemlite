@@ -24,12 +24,10 @@ classdef PBush < cards.BaseCard
             p.addParameter('M',[],@(x)length(x)==1)
             p.parse(PID,varargin{:})
             
-            obj.PID = p.Results.PID;
-            obj.K = p.Results.K;
-            obj.B = p.Results.B;
-            obj.GE = p.Results.GE;
-            obj.RCV = p.Results.RCV;
-            obj.M = p.Results.M;            
+            names = fieldnames(p.Results);
+            for i = 1:length(names)
+                obj.(names{i}) = p.Results.(names{i});
+            end               
         end
         
         function writeToFile(obj,fid)

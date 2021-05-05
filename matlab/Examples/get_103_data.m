@@ -1,9 +1,12 @@
 function f_data = get_103_data(fold_angle,twist_angle,flare_angle,...
-    origin,root_aoa,locked)
+    origin,root_aoa,varargin)
+    p = inputParser();
+    p.addOptional('locked',false,@islogical)
+    p.parse(varargin{:})
     model_dir = 'C:\Git\fwtfemlite\';
     % write the model 
     wt_model = gen.WT_model(fold_angle,twist_angle,flare_angle,origin,root_aoa);
-    wt_model.Locked = locked;
+    wt_model.Locked = p.Results.locked;
     wt_model.writeToFile(model_dir,'GravStiffness',true)
     
     % delete old files

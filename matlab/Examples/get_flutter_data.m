@@ -17,7 +17,7 @@ function f_data = get_flutter_data(fold_angle,twist_angle,flare_angle,origin,roo
     system(command);
     
     %get Results
-    f_data = mni.result.f06.read_f06_flutter('','sol145');
+    f_data = mni.result.f06('sol145.f06').read_flutter();
     
     % append fold angle and root AoA
     for j = 1:length(f_data)

@@ -1,4 +1,4 @@
-function data = mode_tracking(data,modes)
+function data = mode_tracking(data,modes,varargin)
 %MODE_TRACKING corrects the modes numbers in flutter data
 %
 %   In the flutter data 'data' the function sweeps through each velocity
@@ -9,6 +9,12 @@ function data = mode_tracking(data,modes)
 %       modes - number of modes to check
 %   outputs:
 %       data - the original data structre with the mode numbers corrected
+% deal with input parameters
+p = inputParser();
+p.addParameter('manual_switch',{});
+p.parse(varargin{:})
+
+v_switch = cellfun(@(x)x{1},p.Results.manual_switch);
 
 % find all unique velocities
 Vs = sort(unique([data.V]));
@@ -18,6 +24,16 @@ Vs = sort(unique([data.V]));
 mode_track = zeros(modes,length(Vs));
 mode_track(:,1) = 1:modes;
 for v_i = 2:length(Vs)
+   % check if we are manual switch modes 
+   idx = find(v_switch==Vs(v_i),1);
+   if ~isempty(idx)
+       M_f = p.Results.manual_switch{idx}{2};
+       for i=1:modes
+           mode_track(i,v_i) = mode_track(find(M_f(i,:),1),v_i-1);
+       end
+       continue
+   end
+    
    % get frequency and damping data for this and previous velocity
    [last_f,last_d] = extract_freq_damping(data([data.V]==Vs(v_i-1)),mode_track(:,v_i-1));
    [next_f,next_d] = extract_freq_damping(data([data.V]==Vs(v_i)),mode_track(:,v_i-1));

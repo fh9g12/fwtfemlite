@@ -1,0 +1,40 @@
+$ File information
+$
+$	- Created on  : 27-Mar-2021 13:13:15
+$	- Created by  : qe19391 (IT076600)
+$	- Matlab ver  : 9.9.0.1592791 (R2020b) Update 5
+$	- ALENA ver   : v0
+$ this file contains the Aero data for the FWT Model
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
+$ Main Wing Aero Panels
+PAERO   100001                                                  
+CAERO1  100001  100001  0       40      10                      1       
+        -0.0375 .0335   0.      .15     -0.0375 1.      0.      .15     
+$ FWT Aero Panels
+PAERO   101001                                                  
+CAERO1  101001  101001  4       40      10                      1       
+        -0.0375 0.      0.      .15     -0.0375 .333849 0.      .15     
+$ Main Spline
+SPLINE4 7       100001  2               2               IPS     BOTH    
+SET1    2       100001  THRU    100400  
+SET1    2       2       4       THRU    11      13      THRU    22      
+        24      THRU    33      35      THRU    44                      
+        46      THRU    55      57      66      68      THRU    77      
+        79      THRU    88      90      THRU    99      208             
+        114     THRU    147     200     THRU    205     
+$ FWT Spline
+SPLINE4 8       101001  1               1               IPS     BOTH    
+SET1    1       101001  THRU    101150  
+SET1    1       209     221     148     THRU    151                     
+        210     THRU    215     
+AESTAT  1       ANGLEA  
+AESTAT  2       SIDES   
+AESTAT  3       ROLL    
+AESTAT  4       PITCH   
+AESTAT  5       YAW     
+AESTAT  6       URDD1   
+AESTAT  7       URDD2   
+AESTAT  8       URDD3   
+AESTAT  9       URDD4   
+AESTAT  10      URDD5   
+AESTAT  11      URDD6   
