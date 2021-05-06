@@ -44,7 +44,7 @@ classdef CORD2R < cards.BaseCard
     %staic constructors
     methods(Static)
         function obj = FromRMatrix(CID,origin,RMatrix,varargin)
-            A = origin;
+            A = origin(:);
             B = RMatrix*[0 0 1]'+A;
             C = RMatrix*[1 0 0]'+A;
             obj = cards.CORD2R(CID,A,B,C,varargin{:});

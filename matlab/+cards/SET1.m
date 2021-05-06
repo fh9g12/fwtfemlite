@@ -30,13 +30,13 @@ classdef SET1 < cards.BaseCard
             for i = 1: length(sets)
                 set = sets{i};
                 if length(set)>3
-                    if length(format)<7
-                        print_thru(set);
-                    elseif length(format)<9
-                        format = [format,repmat('b',1,9-length(format))];
-                        print_thru(set);
-                    elseif mod(length(format)-9,8)>=6
-                        format = [format,repmat('b',1,8-mod(length(format)-9,8))];
+%                     if length(format)<6
+%                         print_thru(set);
+%                     elseif length(format)<8
+%                         format = [format,repmat('b',1,9-length(format))];
+%                         print_thru(set);
+                    if mod(length(format),8)>=6
+                        format = [format,repmat('b',1,8-mod(length(format),8))];
                         print_thru(set);
                     else
                         print_thru(set);
