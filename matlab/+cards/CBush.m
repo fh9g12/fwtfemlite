@@ -1,4 +1,4 @@
-classdef CBush < cards.BaseCard
+classdef CBUSH < cards.BaseCard
     %FLUTTER_CARD Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -17,7 +17,7 @@ classdef CBush < cards.BaseCard
     end
     
     methods
-        function obj = CBush(EID,PID,GA,GB,varargin)
+        function obj = CBUSH(EID,PID,GA,GB,varargin)
             %GRID_CARD Construct an instance of this class
             %   Detailed explanation goes here
             p = inputParser();
@@ -31,6 +31,7 @@ classdef CBush < cards.BaseCard
            
             p.parse(EID,PID,GA,GB,varargin{:})
             
+            obj.Name = 'CBUSH';
             obj.EID = p.Results.EID;
             obj.PID = p.Results.PID;
             obj.GA = p.Results.GA;
@@ -61,8 +62,8 @@ classdef CBush < cards.BaseCard
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             
-            data = [{'CBUSH'},{obj.EID},{obj.PID},{obj.GA},{obj.GB}];
-            format = 'siiii';
+            data = [{obj.EID},{obj.PID},{obj.GA},{obj.GB}];
+            format = 'iiii';
             switch obj.vectorType
                 case 'g0'
                     data = [data,{obj.G0}];

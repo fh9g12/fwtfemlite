@@ -1,4 +1,4 @@
-classdef Moment < cards.BaseCard
+classdef MOMENT < cards.BaseCard
     %FLUTTER_CARD Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -13,7 +13,7 @@ classdef Moment < cards.BaseCard
     end
     
     methods
-        function obj = Moment(SID,G,M,N,varargin)
+        function obj = MOMENT(SID,G,M,N,varargin)
             %GRID_CARD Construct an instance of this class
             %   Detailed explanation goes here
             p = inputParser();
@@ -24,6 +24,7 @@ classdef Moment < cards.BaseCard
             p.addParameter('CID','',@(x)x>=0)
             p.parse(SID,G,M,N,varargin{:})
             
+            obj.Name = 'MOMENT';
             obj.SID = p.Results.SID;
             obj.G = p.Results.G;
             obj.N1 = p.Results.N(1);
@@ -36,9 +37,9 @@ classdef Moment < cards.BaseCard
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'MOMENT'},{obj.SID},{obj.G},{obj.CID},{obj.M},...
+            data = [{obj.SID},{obj.G},{obj.CID},{obj.M},...
                 {obj.N1},{obj.N2},{obj.N3}];
-            format = 'siiiffff';
+            format = 'iiiffff';
             obj.fprint_nas(fid,format,data);
         end
     end

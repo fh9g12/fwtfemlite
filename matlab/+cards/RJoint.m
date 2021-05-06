@@ -1,4 +1,4 @@
-classdef RJoint < cards.BaseCard
+classdef RJOINT < cards.BaseCard
     %FLUTTER_CARD Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -10,7 +10,7 @@ classdef RJoint < cards.BaseCard
     end
     
     methods
-        function obj = RJoint(EID,GA,GB,varargin)
+        function obj = RJOINT(EID,GA,GB,varargin)
             %GRID_CARD Construct an instance of this class
             %   Detailed explanation goes here
             p = inputParser();
@@ -20,6 +20,7 @@ classdef RJoint < cards.BaseCard
             p.addParameter('CB','')
             p.parse(EID,GA,GB,varargin{:})
             
+            obj.Name = 'RJOINT';
             obj.EID = p.Results.EID;
             obj.GA = p.Results.GA;
             obj.GB = p.Results.GB;
@@ -29,8 +30,8 @@ classdef RJoint < cards.BaseCard
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'RJOINT'},{obj.EID},{obj.GA},{obj.GB},{obj.CB}];
-            format = 'siiis';
+            data = [{obj.EID},{obj.GA},{obj.GB},{obj.CB}];
+            format = 'iiis';
             obj.fprint_nas(fid,format,data);
         end
     end

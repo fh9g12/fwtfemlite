@@ -13,14 +13,15 @@ classdef SET1 < cards.BaseCard
             %   Detailed explanation goes here
             obj.SID = SID;
             obj.IDS = IDS;
+            obj.Name = 'SET1';
             
         end
         
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'SET1'},{obj.SID}];
-            format = 'si';
+            data = [{obj.SID}];
+            format = 'i';
             sets = obj.split_contiguous(obj.IDS);
             function print_thru(set)
                 data = [data,{set(1)},{'THRU'},{set(end)}];

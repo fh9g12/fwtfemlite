@@ -1,4 +1,4 @@
-classdef PBush < cards.BaseCard
+classdef PBUSH < cards.BaseCard
     %FLUTTER_CARD Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -12,7 +12,7 @@ classdef PBush < cards.BaseCard
     end
     
     methods
-        function obj = PBush(PID,varargin)
+        function obj = PBUSH(PID,varargin)
             %GRID_CARD Construct an instance of this class
             %   Detailed explanation goes here
             p = inputParser();
@@ -24,6 +24,7 @@ classdef PBush < cards.BaseCard
             p.addParameter('M',[],@(x)length(x)==1)
             p.parse(PID,varargin{:})
             
+            obj.Name = 'PBUSH';
             names = fieldnames(p.Results);
             for i = 1:length(names)
                 obj.(names{i}) = p.Results.(names{i});
@@ -33,8 +34,8 @@ classdef PBush < cards.BaseCard
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'PBUSH'},{obj.PID}];
-            format = 'si';
+            data = [{obj.PID}];
+            format = 'i';
             if ~isempty(obj.K)
                 data = [data,{'K'}];
                 format = [format,'s'];

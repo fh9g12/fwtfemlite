@@ -22,6 +22,7 @@ classdef RBE2 < cards.BaseCard
             p.addParameter('Alpha','')
             p.parse(EID,GN,CM,GMn,varargin{:})
             
+            obj.Name = 'RBE2';
             obj.EID = p.Results.EID;
             obj.GN = p.Results.GN;
             obj.CM = p.Results.CM;
@@ -32,8 +33,8 @@ classdef RBE2 < cards.BaseCard
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'RBE2'},{obj.EID},{obj.GN},{obj.CM}];
-            format = 'siii';
+            data = [{obj.EID},{obj.GN},{obj.CM}];
+            format = 'iii';
             for i = 1:length(obj.GMn)
                 data = [data,{obj.GMn(i)}];
                 format = [format,'i'];

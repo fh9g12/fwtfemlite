@@ -56,17 +56,18 @@ classdef CAERO1 < cards.BaseCard
             names = fieldnames(p.Results);
             for i = 1:length(names)
                 obj.(names{i}) = p.Results.(names{i});
-            end            
+            end   
+            obj.Name = 'CAERO1';
         end
         
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'CAERO1'},{obj.EID},{obj.PID},{obj.CP},...
+            data = [{obj.EID},{obj.PID},{obj.CP},...
                 {obj.NSPAN},{obj.NCHORD},{obj.LSPAN},{obj.LCHORD},...
                 {obj.IGID},{obj.P1(1)},{obj.P1(2)},{obj.P1(3)},...
                 {obj.X12},{obj.P4(1)},{obj.P4(2)},{obj.P4(3)},{obj.X43}];
-            format = 'siiiiiiiiffffffff';
+            format = 'iiiiiiiiffffffff';
             obj.fprint_nas(fid,format,data);
         end
     end

@@ -28,6 +28,7 @@ classdef SPLINE4 < cards.BaseCard
                 {'FORCE','DISP','BOTH'})))
             p.parse(EID,varargin{:})
             
+            obj.Name = 'SPLINE4';
             obj.EID = p.Results.EID;
             obj.CAERO = p.Results.CAERO;
             obj.AELIST = p.Results.AELIST;
@@ -40,9 +41,9 @@ classdef SPLINE4 < cards.BaseCard
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'SPLINE4'},{obj.EID},{obj.CAERO},{obj.AELIST},...
+            data = [{obj.EID},{obj.CAERO},{obj.AELIST},...
                 {obj.SETG},{obj.DZ},{obj.METH},{obj.USAGE}];
-            format = 'siiibifss';
+            format = 'iiibifss';
             obj.fprint_nas(fid,format,data);
         end
     end

@@ -13,14 +13,14 @@ classdef AESTAT < cards.BaseCard
             %   Detailed explanation goes here
             obj.ID = ID;
             obj.LABEL = LABEL;
-            
+            obj.Name = 'AESTAT';
         end
         
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'AESTAT'},{obj.ID},{obj.LABEL}];
-            format = 'sis';  
+            data = [{obj.ID},{obj.LABEL}];
+            format = 'is';  
             obj.fprint_nas(fid,format,data);
         end
     end

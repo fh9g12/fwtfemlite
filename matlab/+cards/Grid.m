@@ -1,4 +1,4 @@
-classdef Grid < cards.BaseCard
+classdef GRID < cards.BaseCard
     %FLUTTER_CARD Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -14,7 +14,7 @@ classdef Grid < cards.BaseCard
     end
     
     methods
-        function obj = Grid(ID,X,varargin)
+        function obj = GRID(ID,X,varargin)
             %GRID_CARD Construct an instance of this class
             %   Detailed explanation goes here
             p = inputParser();
@@ -26,6 +26,7 @@ classdef Grid < cards.BaseCard
             p.addParameter('SEID',[],@(x)x>=0)
             p.parse(ID,X,varargin{:})
             
+            obj.Name = 'GRID';
             obj.ID = p.Results.ID;
             obj.CP = p.Results.CP;
             obj.X1 = p.Results.X(1);
@@ -39,9 +40,9 @@ classdef Grid < cards.BaseCard
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'GRID'},{obj.ID},{obj.CP},{obj.X1},{obj.X2},...
+            data = [{obj.ID},{obj.CP},{obj.X1},{obj.X2},...
                 {obj.X3},{obj.CD},{obj.PS},{obj.SEID}];
-            format = 'siifffisi';
+            format = 'iifffisi';
             obj.fprint_nas(fid,format,data);
         end
     end

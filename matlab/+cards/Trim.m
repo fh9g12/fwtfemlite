@@ -1,4 +1,4 @@
-classdef Trim < cards.BaseCard
+classdef TRIM < cards.BaseCard
     %FLUTTER_CARD Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -20,23 +20,24 @@ classdef Trim < cards.BaseCard
     end
     
     methods
-        function obj = Trim(SID)
+        function obj = TRIM(SID)
             %FLUTTER_CARD Construct an instance of this class
             %   Detailed explanation goes here
-            obj.SID = SID;            
+            obj.SID = SID;
+            obj.Name = 'TRIM';
         end
         
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'TRIM'},{obj.SID},{obj.MACH},{obj.Q},...
+            data = [{obj.SID},{obj.MACH},{obj.Q},...
                 {'ANGLEA'},{obj.ANGLEA},{'SIDES'},{obj.SIDES},...
                 {'ROLL'},{obj.ROLL},{'PITCH'},{obj.PITCH},...
                 {'YAW'},{obj.YAW},{'URDD1'},{obj.URDD1},...
                 {'URDD2'},{obj.URDD2},{'URDD3'},{obj.URDD3},...
                 {'URDD4'},{obj.URDD4},{'URDD5'},{obj.URDD5},...
                 {'URDD6'},{obj.URDD6}];
-            format = 'siffsfsfbsfsfsfsfsfsfsfsfsf';
+            format = 'iffsfsfbsfsfsfsfsfsfsfsfsf';
             obj.fprint_nas(fid,format,data);
         end
     end

@@ -13,14 +13,15 @@ classdef FLFACT < cards.BaseCard
             %   Detailed explanation goes here
             obj.SID = SID;
             obj.VALUES = VALUES;
+            obj.Name = 'FLFACT';
             
         end
         
         function writeToFile(obj,fid)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            data = [{'FLFACT'},{obj.SID}];
-            format = 'si';
+            data = [{obj.SID}];
+            format = 'i';
             for i = 1: length(obj.VALUES)
                 data(end+1) = {obj.VALUES(i)};
                 format(end+1) = 'f';        
