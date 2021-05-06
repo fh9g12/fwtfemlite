@@ -8,6 +8,7 @@ flare_angle = 10;
 origin = [0,1.00651180744171,0];
 
 root_aoas = (2.5:2.5:10)+1.5;
+% root_aoas = ([10])+1.5;
 Vs = 0:2:40;
 data = [];
 wb = waitbar(0,'Calculating coast angles');
@@ -81,23 +82,15 @@ function data = find_coast_angle(f,root_aoa,V,varargin)
         [x.fold_angle]'-[x.initial_fold]',[x.twist_angle]'-[x.initial_twist]',...
         [x.drag]'-[x.initial_drag]'];
        
-    % check if initial answer gives a result close enough (e.g. in the 
-    % 'linear' range) to use the simple algothrim of using the last answer 
-    % as the next guess
-    if data(1).fold_angle > -30
-        [~,cross_data] = fmincon_coast(f,[data(1).fold_angle,data(1).twist_angle,data(1).drag],...
-            'MaxIter',p.Results.MaxIter,'Xtol',0.1,'Ytol',0.1,...
-            'Lookup',current_guesses(data));
-    else
-        IC = p.Results.IC;
-        % test if the fold angle is diverging around the left handside of
-        % the bracket, if it is find a suitable bracket
-        data = append_guess_data(data,[IC,f(IC)],root_aoa,V);
-        % search bracket for zero crossing
-        [~,cross_data] = fmincon_coast(f,[data(end).fold_angle,data(end).twist_angle,data(end).drag],...
-            'MaxIter',p.Results.MaxIter,'Xtol',0.1,'Ytol',0.1,...
-            'Lookup',current_guesses(data));
-    end
+    IC = p.Results.IC;
+    % test if the fold angle is diverging around the left handside of
+    % the bracket, if it is find a suitable bracket
+    data = append_guess_data(data,[IC,f(IC)],root_aoa,V);
+    % search bracket for zero crossing
+    [~,cross_data] = fmincon_coast(f,[data(end).fold_angle,data(end).twist_angle,data(end).drag],...
+        'MaxIter',p.Results.MaxIter,'Xtol',0.1,'Ytol',0.1,...
+        'Lookup',current_guesses(data));
+    
     data = append_guess_data(data,cross_data,root_aoa,V,'i_offset',length(data));  
     data(end).state = 'con';
 end
@@ -127,11 +120,15 @@ function [res,guesses] = fmincon_coast(f,ic,varargin)
     
     guesses(1,:) = [ic,f_lookup(ic)];
     for i = 2:p.Results.MaxIter
-        gain = 1;
+        gain = p.Results.Gain;
         if abs(guesses(i-1,4))>20
-            gain=0.5;
+            gain=gain*0.5;
+        elseif i>2 && abs((guesses(i-1,4)/guesses(i-2,4))+1)<0.1
+            gain=gain*0.5;
+        elseif i>10
+            gain=gain*0.5;
         end
-        tmp_x = guesses(i-1,1:3) + gain .* p.Results.Gain .* guesses(i-1,4:6);
+        tmp_x = guesses(i-1,1:3) + gain .* guesses(i-1,4:6);
         tmp_y = f_lookup(tmp_x);
         guesses(i,:) = [tmp_x,tmp_y];
         if abs(tmp_y(1)) < p.Results.Ytol
@@ -176,7 +173,7 @@ function [res] = get_fold_angle(X,flare_angle,origin,root_aoa,V)
     % get trim data
     data = get_trim_data(fold_angle,twist_angle,flare_angle,origin,root_aoa,...
         V,'DragMoment',X(3),'WingtipCamber',0,'TunnelWalls',true,...
-        'fwt_cl_factor',1.12);
+        'fwt_cl_factor',1.12,'include_sweep',true);
     
     %get fold angle
     res = get_fold_and_twist(data,fold_angle);

@@ -1,13 +1,17 @@
 %% parameters
-fold_angle = 20;
-twist_angle = 0;
+fold_angle = 10;
+twist_angle = -1.28;
 flare_angle = 10;
+drag_mom = 0;
 origin = [0,1.00651180744171,0];
-root_aoa = 10;
+root_aoa = 11.5;
 V=18;
 %% get Data
 [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,flare_angle,...
-    origin,root_aoa,V,'Locked', true,'TunnelWalls',false);
+    origin,root_aoa,V,'Locked', false,'TunnelWalls',false,'include_sweep',false,'fwt_cl_factor',1.12);
+% [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,flare_angle,origin,root_aoa,...
+%         V,'DragMoment',drag_mom,'WingtipCamber',0,'TunnelWalls',true,...
+%         'fwt_cl_factor',1.12,'include_sweep',true,'Locked',false);
 twist = rad2deg(data.thX(data.GP == 208));
 fold = fold_angle + rad2deg(data.thX(data.GP == 209)) - twist;
 fprintf('Twist Angle: %.2f deg\n',twist);
@@ -40,8 +44,13 @@ f = [res_aeroF.aeroFx;res_aeroF.aeroFy;res_aeroF.aeroFz;...
     res_aeroF.aeroMx;res_aeroF.aeroMy;res_aeroF.aeroMz];
 
 model.CAERO1.PanelForce = f';
-model.update('Scale',2)
 
+
+res_disp = mni.result.f06('sol144.f06').read_disp();
+% apply deformation result
+[~,i] = ismember(model.GRID.GID,res_disp.GP);
+model.GRID.Deformation = [res_disp.dX(:,i);res_disp.dY(:,i);res_disp.dZ(:,i)];
+model.update('Scale',2)
 %% plot pressure
 
 %load model

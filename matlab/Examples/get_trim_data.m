@@ -7,10 +7,12 @@ function [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,...
     p.addParameter('WingtipCamber',0);
     p.addParameter('TunnelWalls',false);
     p.addParameter('fwt_cl_factor',1);
+    p.addParameter('include_sweep',false);
     p.parse(varargin{:});
     model_dir = 'C:\Git\fwtfemlite\';
     % write the model 
-    wt_model = gen.WT_model(fold_angle,twist_angle,flare_angle,origin,root_aoa);
+    wt_model = gen.WT_model(fold_angle,twist_angle,flare_angle,origin,root_aoa,...
+        'include_sweep',p.Results.include_sweep);
     wt_model.Locked = p.Results.Locked;
     %wt_model.wing_camber = p.Results.WingtipCamber;
     wt_model.wingtip_camber = p.Results.WingtipCamber;

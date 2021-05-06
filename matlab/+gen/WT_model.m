@@ -16,17 +16,22 @@ classdef WT_model
         wingtip_camber = 0;
         tunnel_walls = false;
         wingtip_cl_correction = 1;
+        include_sweep = false;
     end
     
     methods
-        function obj = WT_model(fold_angle,twist_angle,flare_angle,origin,root_aoa)
+        function obj = WT_model(fold_angle,twist_angle,flare_angle,origin,root_aoa,varargin)
             %FWT_COORDS Construct an instance of this class
             %   Detailed explanation goes here
+            p=inputParser();
+            p.addParameter('include_sweep',false);
+            p.parse(varargin{:});
             obj.fold_angle = fold_angle;
             obj.flare_angle = flare_angle;
             obj.origin = origin;
             obj.root_aoa = root_aoa;
             obj.twist_angle = twist_angle;
+            obj.include_sweep = p.Results.include_sweep;
         end
         function write_aero(obj,fid,varargin)
             awi.fe.FEBaseClass.writeFileStamp(fid);
@@ -35,6 +40,19 @@ classdef WT_model
             %create main wing aero panels
             main_id = 100001;
             fwt_id  = 101001;
+            
+            rad_root_aoa = deg2rad(obj.root_aoa);
+            
+            v_fwt = gem(obj.fold_angle,1,obj.root_aoa,0,obj.flare_angle,0);
+            fwt_local_aoa = atan(v_fwt(3)./v_fwt(1));           
+            %fwt_local_aoa = -atan(sind(obj.flare_angle)*sind(obj.fold_angle))+rad_root_aoa*cosd(obj.fold_angle);
+            if obj.include_sweep
+                fwt_local_sweep = atan(v_fwt(2)./v_fwt(1));
+            else
+                fwt_local_sweep = 0;
+            end
+            fwt_span = 0.333849;
+            
             
             awi.fe.FEBaseClass.writeComment('Main Wing Aero Panels',fid)
             cards.PAERO1(main_id).writeToFile(fid);
@@ -45,7 +63,7 @@ classdef WT_model
             awi.fe.FEBaseClass.writeComment('FWT Aero Panels',fid)
             cards.PAERO1(fwt_id).writeToFile(fid)
             cards.CAERO1(fwt_id,fwt_id,[-0.0375,0,0],...
-            [-0.0375,0.333849,0],0.15,0.15,1,...
+            [-0.0375+tan(fwt_local_sweep)*fwt_span,fwt_span,0],0.15,0.15,1,...
             'CP',4,'NSPAN',15,'NCHORD',10).writeToFile(fid)
 
             awi.fe.FEBaseClass.writeComment('Main Spline',fid)
@@ -69,8 +87,8 @@ classdef WT_model
                 cards.AESTAT(i,names{i}).writeToFile(fid);
             end
             
-            local_aoa = -atan(sind(obj.flare_angle)*sind(obj.fold_angle));
-            rad_root_aoa = deg2rad(obj.root_aoa);
+            
+            
             
 %             function [cl_alpha,cl_0] = get_clalpha(aoa)
 %                 cl_alpha = ones(size(aoa))*0.537;
@@ -86,8 +104,7 @@ classdef WT_model
             end
             
             aoa = [ones(400,1)*rad_root_aoa+deg2rad(obj.wing_camber);...
-                ones(150,1)*local_aoa+rad_root_aoa*cosd(obj.fold_angle)+...
-                deg2rad(obj.wingtip_camber)];
+                ones(150,1)*fwt_local_aoa+deg2rad(obj.wingtip_camber)];
             [cl_alpha,cl_0] = get_clalpha(aoa);
             aoa = aoa + cl_0;
             
