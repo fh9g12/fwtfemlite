@@ -1,14 +1,15 @@
 %% parameters
-fold_angle = 10;
+fold_angle = 0;
 twist_angle = -1.28;
 flare_angle = 10;
 drag_mom = 0;
 origin = [0,1.00651180744171,0];
-root_aoa = 11.5;
+root_aoa = 0;
 V=18;
 %% get Data
 [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,flare_angle,...
-    origin,root_aoa,V,'Locked', false,'TunnelWalls',false,'include_sweep',false,'fwt_cl_factor',1.12);
+    origin,root_aoa,V,'Locked', false,'TunnelWalls',false,'include_sweep',true,...
+    'fwt_cl_factor',1.12,'Silent',false);
 % [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,flare_angle,origin,root_aoa,...
 %         V,'DragMoment',drag_mom,'WingtipCamber',0,'TunnelWalls',true,...
 %         'fwt_cl_factor',1.12,'include_sweep',true,'Locked',false);
@@ -39,40 +40,23 @@ drag_mag = dot([1 0 0],surface_normal);
 drag_mom = sum(fwt_drag.*drag_mag.*mom_arm);
 
 model = mni.import_matran('C:\Git\fwtfemlite\sol144.bdf');
-model.draw()
+model.draw();
 f = [res_aeroF.aeroFx;res_aeroF.aeroFy;res_aeroF.aeroFz;...
     res_aeroF.aeroMx;res_aeroF.aeroMy;res_aeroF.aeroMz];
 
 model.CAERO1.PanelForce = f';
+model.CAERO1.PanelPressure = p_data.Cp;
 
 
 res_disp = mni.result.f06('sol144.f06').read_disp();
 % apply deformation result
 [~,i] = ismember(model.GRID.GID,res_disp.GP);
 model.GRID.Deformation = [res_disp.dX(:,i);res_disp.dY(:,i);res_disp.dZ(:,i)];
-model.update('Scale',2)
+model.update('Scale',0)
 %% plot pressure
 
-%load model
-
-% model = mni.import_matran('C:\Git\fwtfemlite\sol144.bdf');
-% model.draw()
-% 
-% % apply deformation result
-% [~,i] = ismember(model.GRID.GID,data.GP);
-% model.GRID.Deformation = [data.dX(:,i);data.dY(:,i);data.dZ(:,i)];
-% 
-% %% apply aero result
-% model.CAERO1.PanelPressure = p_data.Cp;
-% 
-% f = [f_data.aeroFx;f_data.aeroFy;f_data.aeroFz;...
-%     f_data.aeroMx;f_data.aeroMy;f_data.aeroMz];
-% 
-% model.CAERO1.PanelForce = f';
-% model.update('Scale',1)
-% 
-% %% plot Cp distribution
-% le_cp = p_data.Cp(1:10:length(p_data.Cp));
-% figure(4);clf;plot(([1:55,55.5])/55.5,[le_cp,0])
-% xlabel('Normalised span Location')
-% ylabel('Cp')
+%% plot Cp distribution
+le_cp = p_data.Cp(1:10:length(p_data.Cp));
+figure(4);clf;plot(([1:55,55.5])/55.5,[le_cp,0])
+xlabel('Normalised span Location')
+ylabel('Cp')

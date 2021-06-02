@@ -8,6 +8,7 @@ function [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,...
     p.addParameter('TunnelWalls',false);
     p.addParameter('fwt_cl_factor',1);
     p.addParameter('include_sweep',false);
+    p.addParameter('Silent',true)
     p.parse(varargin{:});
     model_dir = 'C:\Git\fwtfemlite\';
     % write the model 
@@ -30,7 +31,10 @@ function [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,...
     % run NASTRAN
     fprintf('Computing sol144 for a fold: %.2f deg, flare: %.1f deg, root AoA: %.1f deg, and velocity %.1f m/s\n',...
         fold_angle,flare_angle,root_aoa,V);         
-    command = ['C:\MSC.Software\MSC_Nastran\20181\bin\nastran.exe',' ','C:\Git\fwtfemlite\sol144.bdf',' 1>NUL 2>NUL'];
+    command = ['C:\MSC.Software\MSC_Nastran\20181\bin\nastran.exe',' ','C:\Git\fwtfemlite\sol144.bdf'];
+    if p.Results.Silent
+       command = [command,' 1>NUL 2>NUL'];
+    end
     system(command);
     
     %get Results

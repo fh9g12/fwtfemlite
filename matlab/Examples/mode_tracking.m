@@ -28,9 +28,7 @@ for v_i = 2:length(Vs)
    idx = find(v_switch==Vs(v_i),1);
    if ~isempty(idx)
        M_f = p.Results.manual_switch{idx}{2};
-       for i=1:modes
-           mode_track(i,v_i) = mode_track(find(M_f(i,:),1),v_i-1);
-       end
+       mode_track(:,v_i) = mode_track(M_f,v_i-1);
        continue
    end
     

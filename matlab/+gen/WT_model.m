@@ -34,9 +34,9 @@ classdef WT_model
             obj.include_sweep = p.Results.include_sweep;
         end
         function write_aero(obj,fid,varargin)
-            printing.bdf.writeFileStamp(fid);
-            printing.bdf.writeComment('this file contains the Aero data for the FWT Model',fid)
-            printing.bdf.writeColumnDelimiter(fid,'8');
+            mni.printing.bdf.writeFileStamp(fid);
+            mni.printing.bdf.writeComment('this file contains the Aero data for the FWT Model',fid)
+            mni.printing.bdf.writeColumnDelimiter(fid,'8');
             %create main wing aero panels
             main_id = 100001;
             fwt_id  = 101001;
@@ -54,38 +54,31 @@ classdef WT_model
             fwt_span = 0.333849;
             
             
-            printing.bdf.writeComment('Main Wing Aero Panels',fid)
-            cards.PAERO1(main_id).writeToFile(fid);
-            cards.CAERO1(main_id,main_id,[-0.0375,0.0335,0],...
+            mni.printing.bdf.writeComment('Main Wing Aero Panels',fid)
+            mni.printing.cards.PAERO1(main_id).writeToFile(fid);
+            mni.printing.cards.CAERO1(main_id,main_id,[-0.0375,0.0335,0],...
             [-0.0375,obj.origin(2),0],0.15,0.15,1,...
             'CP',0,'NSPAN',40,'NCHORD',10).writeToFile(fid);
         
-            printing.bdf.writeComment('FWT Aero Panels',fid)
-            cards.PAERO1(fwt_id).writeToFile(fid)
-            cards.CAERO1(fwt_id,fwt_id,[-0.0375,0,0],...
+            mni.printing.bdf.writeComment('FWT Aero Panels',fid)
+            mni.printing.cards.PAERO1(fwt_id).writeToFile(fid)
+            mni.printing.cards.CAERO1(fwt_id,fwt_id,[-0.0375,0,0],...
             [-0.0375+tan(fwt_local_sweep)*fwt_span,fwt_span,0],0.15,0.15,1,...
             'CP',4,'NSPAN',15,'NCHORD',10).writeToFile(fid)
 
-            printing.bdf.writeComment('Main Spline',fid)
-            cards.SPLINE4(7,'CAERO',main_id,'AELIST',2,'SETG',2,...
+            mni.printing.bdf.writeComment('Main Spline',fid)
+            mni.printing.cards.SPLINE4(7,'CAERO',main_id,'AELIST',2,'SETG',2,...
                     'METH','IPS','USAGE','BOTH').writeToFile(fid);
-            cards.AELIST(2,main_id:main_id+399).writeToFile(fid);
-            cards.SET1(2,[2,4:11,13:22,24:33,35:44,...
+            mni.printing.cards.AELIST(2,main_id:main_id+399).writeToFile(fid);
+            mni.printing.cards.SET1(2,[2,4:11,13:22,24:33,35:44,...
                             46:55,57,66,68:77,79:88,90:99,208,...
                             114:147,200:205]).writeToFile(fid);
         
-            printing.bdf.writeComment('FWT Spline',fid)
-            cards.SPLINE4(8,'CAERO',fwt_id,'AELIST',1,'SETG',1,...
+            mni.printing.bdf.writeComment('FWT Spline',fid)
+            mni.printing.cards.SPLINE4(8,'CAERO',fwt_id,'AELIST',1,'SETG',1,...
                     'METH','IPS','USAGE','BOTH').writeToFile(fid);
-            cards.AELIST(1,fwt_id:fwt_id+149).writeToFile(fid);
-            cards.SET1(1,[209,221,148:151,210:215]).writeToFile(fid);
-
-            % write some AESTAT cards
-            names = {'ANGLEA','SIDES','ROLL','PITCH','YAW',...
-                'URDD1','URDD2','URDD3','URDD4','URDD5','URDD6'};
-            for i = 1:length(names)
-                cards.AESTAT(i,names{i}).writeToFile(fid);
-            end
+            mni.printing.cards.AELIST(1,fwt_id:fwt_id+149).writeToFile(fid);
+            mni.printing.cards.SET1(1,[209,221,148:151,210:215]).writeToFile(fid);
             
             function [cl_alpha,cl_0] = get_clalpha(aoa)
                 cl_alpha = ones(size(aoa))*obj.wingtip_cl_correction;
@@ -98,29 +91,29 @@ classdef WT_model
             aoa = aoa + cl_0;
             
             % generate twist on wingtip
-            DMI_W2GJ = cards.DMI('W2GJ',aoa,2,1,0);
+            DMI_W2GJ = mni.printing.cards.DMI('W2GJ',aoa,2,1,0);
             if obj.tunnel_walls
                 DMI_W2GJ.MATRIX = [DMI_W2GJ.MATRIX;zeros(8*16*8,1)];
             end
             DMI_W2GJ.writeToFile(fid);
             
             % generate wingtip C_l correction factor
-            DMI_WKK = cards.DMI('WKK',reshape(repmat(cl_alpha',2,1),[],1),3,1,0);
+            DMI_WKK = mni.printing.cards.DMI('WKK',reshape(repmat(cl_alpha',2,1),[],1),3,1,0);
             if obj.tunnel_walls
                 DMI_W2GJ.MATRIX = [DMI_W2GJ.MATRIX;zeros(8*16*8,1)];
             end
             DMI_WKK.writeToFile(fid);
             
             if obj.tunnel_walls
-               printing.bdf.writeComment('Tunnel Walls',fid)
+               mni.printing.bdf.writeComment('Tunnel Walls',fid)
                nodes = gen.octagon_nodes(1.524,2.1336,0.6146,...
                    'FilletAngle',32,'origin',[0,-1.524/2]);
                nodes = [repmat(-2,8,1),nodes];
                nodes(end+1,:) = nodes(1,:);
                pid = 102001;
                for i = 1:size(nodes,1)-1
-                   cards.PAERO1(pid).writeToFile(fid)
-                   cards.CAERO1(pid,pid,nodes(i,:),...
+                   mni.printing.cards.PAERO1(pid).writeToFile(fid)
+                   mni.printing.cards.CAERO1(pid,pid,nodes(i,:),...
                    nodes(i+1,:),4,4,1,...
                    'NSPAN',8,'NCHORD',16).writeToFile(fid)
                    pid = pid + (8*16);
@@ -137,8 +130,8 @@ classdef WT_model
             p.parse(varargin{:})
             %% write coords to file
             fid = fopen([dir,obj.fwt_coord_filename],'w+');
-            printing.bdf.writeFileStamp(fid);
-            printing.bdf.writeColumnDelimiter(fid,'8');
+            mni.printing.bdf.writeFileStamp(fid);
+            mni.printing.bdf.writeColumnDelimiter(fid,'8');
     
             elements = obj.gen_elements();            
             
@@ -174,19 +167,19 @@ classdef WT_model
         end
         
         function write_hinge(obj,fid,hingeStiffness,Moment)
-            printing.bdf.writeFileStamp(fid);
-            printing.bdf.writeComment('this file contains the Hinge data for teh FWT WT Model',fid)
-            printing.bdf.writeColumnDelimiter(fid,'8');
-            fl_cards = [{cards.GRID(208,[0,0,0],'CP',3,'CD',3)},...
-                {cards.GRID(209,[0,0,0],'CP',3,'CD',3)}];
+            mni.printing.bdf.writeFileStamp(fid);
+            mni.printing.bdf.writeComment('this file contains the Hinge data for teh FWT WT Model',fid)
+            mni.printing.bdf.writeColumnDelimiter(fid,'8');
+            fl_cards = [{mni.printing.cards.GRID(208,[0,0,0],'CP',3,'CD',3)},...
+                {mni.printing.cards.GRID(209,[0,0,0],'CP',3,'CD',3)}];
             if obj.Locked
-                fl_cards = [fl_cards,{cards.RBE2(300,208,123456,209)}];
+                fl_cards = [fl_cards,{mni.printing.cards.RBE2(300,208,123456,209)}];
             else
                 fl_cards = [fl_cards,...
-                    {cards.RJOINT(251,208,209,'CB','12356')},...
-                    {cards.CBUSH(103,13,208,209,'CID',3)},...
-                    {cards.PBUSH(13,'K',[0,0,0,hingeStiffness,0,0])},...
-                    {cards.MOMENT(12,209,Moment,[1,0,0],'CID',3)}];
+                    {mni.printing.cards.RJOINT(251,208,209,'CB','12356')},...
+                    {mni.printing.cards.CBUSH(103,13,208,209,'CID',3)},...
+                    {mni.printing.cards.PBUSH(13,'K',[0,0,0,hingeStiffness,0,0])},...
+                    {mni.printing.cards.MOMENT(12,209,Moment,[1,0,0],'CID',3)}];
             end
             
             for i = 1:length(fl_cards)
@@ -203,10 +196,10 @@ classdef WT_model
             
             
             % create alena coord systems
-            C_wing = cards.CORD2R.FromRMatrix(1,[0,0,0],wing_rot_m);
-            C_wingtip = cards.CORD2R.FromRMatrix(2,obj.origin,fwt_rot_m);
-            C_hinge = cards.CORD2R.FromRMatrix(3,obj.origin,hinge_rot_m);
-            C_aero = cards.CORD2R.FromRMatrix(4,obj.origin,aero_fwt_rot_m);          
+            C_wing = mni.printing.cards.CORD2R.FromRMatrix(1,[0,0,0],wing_rot_m);
+            C_wingtip = mni.printing.cards.CORD2R.FromRMatrix(2,obj.origin,fwt_rot_m);
+            C_hinge = mni.printing.cards.CORD2R.FromRMatrix(3,obj.origin,hinge_rot_m);
+            C_aero = mni.printing.cards.CORD2R.FromRMatrix(4,obj.origin,aero_fwt_rot_m);          
             
             % return elements
             elements = [{C_wing},{C_wingtip},...

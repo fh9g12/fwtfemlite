@@ -1,9 +1,9 @@
 $ File information
 $
-$	- Created on  : 5-May-2021 14:08:36
+$	- Created on  : 26-May-2021 10:35:53
 $	- Created by  : qe19391 (IT076600)
 $	- Matlab ver  : 9.9.0.1592791 (R2020b) Update 5
-$	- ALENA ver   : v0
+$	- MATRAN ver  : v1.0.0.0
 $ this file contains the Aero data for the FWT Model
 $.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
 $ Main Wing Aero Panels
@@ -27,23 +27,6 @@ SPLINE4 8       101001  1               1               IPS     BOTH
 AELIST  1       101001  THRU    101150  
 SET1    1       209     221     148     THRU    151                     
         210     THRU    215     
-AESTAT  1       ANGLEA  
-AESTAT  2       SIDES   
-AESTAT  3       ROLL    
-AESTAT  4       PITCH   
-AESTAT  5       YAW     
-AESTAT  6       URDD1   
-AESTAT  7       URDD2   
-AESTAT  8       URDD3   
-AESTAT  9       URDD4   
-AESTAT  10      URDD5   
-AESTAT  11      URDD6   
-$ DMI card
-$.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
 DMI     W2GJ    0       2       1       0               550     1       
-DMI     W2GJ    1       1       .1745329THRU    400     401     .1046858
-+       THRU    550     
-$ DMI card
-$.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
 DMI     WKK     0       3       1       0               1100    1       
-DMI     WKK     1       1       1.      THRU    1100    
+DMI     WKK     1       1       1.12    THRU    1100    
