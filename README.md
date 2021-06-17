@@ -1,8 +1,6 @@
 # Finite Element Model of the WINDY Wind Tunnel Model fitted with the 'Lite' Folding Wingtip
 Package Author: Fintan Healy
-
 Contact: fintan.healy@bristol.ac.uk
-
 Updated: 17 June 2021
 
 -------------------
@@ -22,11 +20,13 @@ Dependency
 - fwtcoord.bdf
 - hinge.bdf
 - litewingtip.bdf
+- fwt_coord.bdf
+- trim.bdf
 
 -------------------
 Options
 -------------------
-(1) Exclude call to 'hingelock.bdf' in 'sol144.bdf' for free-hinge configuration.
+(1) Exclude call to 'hingelock.bdf' in sol files for free-hinge configuration.
 
 (2) 'litewingtip.bdf' includes an option for varying the wingtip's internal mass distribution.
 
