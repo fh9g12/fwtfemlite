@@ -1,21 +1,26 @@
 # Finite Element Model of the WINDY Wind Tunnel Model fitted with the 'Lite' Folding Wingtip
-Package Author: R Cheung
+Package Author: Fintan Healy
 
-Contact: r.c.m.cheung@bristol.ac.uk
+Contact: fintan.healy@bristol.ac.uk
 
-Updated: 08 December 2020
+Updated: 17 June 2021
 
 -------------------
 Main File
 -------------------
+- sol101.bdf
+- sol103.bdf
 - sol144.bdf
+- sol145.bdf
 
 -------------------
 Dependency
 -------------------
 - aero.bdf
 - fem.bdf
-- hingelock.bdf
+- flutter.bdf
+- fwtcoord.bdf
+- hinge.bdf
 - litewingtip.bdf
 
 -------------------
@@ -28,5 +33,4 @@ Options
 -------------------
 Supplementary Files
 -------------------
-- sol101.bdf for linear static analysis
-- sol103.bdf for normal mode analysis
+- matlab folder contains code to auto generate the aero, flutter, fwtcoord, and hinge bdf files
