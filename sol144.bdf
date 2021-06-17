@@ -23,9 +23,18 @@ $ Change Log:
 $ 08 February 2021 - (Fintan Healy) udpadated to 'deformable model'
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 NASTRAN NLINES=999999
+ASSIGN output4='AJJ.op4',formatted,UNIT=11
+ASSIGN output4='FFAJ.op4',formatted,UNIT=12
 $ STATIC AEROELASTIC ANALYSIS
 SOL 144
 TIME 600
+DIAG 6,8
+COMPILE PFAERO $
+ALTER 275$
+OUTPUT4 AJJ,,,,//0/11///8 $
+COMPILE AESTATRS $
+ALTER 'ASDR' $
+OUTPUT4 FFAJ,,,,//0/12///8 $
 CEND
 TITLE=WINDY - LITE FWT
 ECHO=NONE
@@ -42,16 +51,19 @@ SUBCASE 1
   SUBTITLE=AOA5DEG
   SPC=3
   TRIM=1
-  LOAD=11
+  LOAD=10
 BEGIN BULK
 $ PARAM,POST,0
 PARAM,WTMASS,1.
 PARAM,SNORM,20.
 PARAM,PRTMAXIM,YES
+PARAM,BAILOUT,-1
 MDLPRM,HDF5,0
+MDLPRM,H5MTX,1
 $ Gravity
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 GRAV    11      0       9.81    0.0     0.0     -1.0
+LOAD    10      1.      1.      11      1.      12
 $ SPC (wing fixed at the root)
 $-------2-------3-------4-------5-------6-------7-------8-------9-------T
 SPCADD  3       2

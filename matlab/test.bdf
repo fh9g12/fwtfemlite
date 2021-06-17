@@ -1,0 +1,13 @@
+$ File information
+$
+$	- Created on  : 24-Feb-2021 22:05:52
+$	- Created by  : qe19391 (IT076600)
+$	- Matlab ver  : 9.6.0.1072779 (R2019a)
+$	- ALENA ver   : v0
+$ this file contains the Hinge data for teh FWT WT Model
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
+GRID    208     3       0.      0.      0.      3                       
+GRID    209     3       0.      0.      0.      3                       
+RJOINT  251     208     209     12356   
+CBUSH   103     13      208     209                             3       
+PBUSH   13      K                               .0001                   

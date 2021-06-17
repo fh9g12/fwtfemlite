@@ -1,0 +1,11 @@
+$ File information
+$
+$	- Created on  : 17-Jun-2021 10:54:10
+$	- Created by  : qe19391 (IT076600)
+$	- Matlab ver  : 9.9.0.1592791 (R2020b) Update 5
+$	- MATRAN ver  : v1.1.0.0
+$ this file contains the Hinge data for teh FWT WT Model
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
+GRID    208     3       0.      0.      0.      3                       
+GRID    209     3       0.      0.      0.      3                       
+RBE2    300     208     123456  209             
