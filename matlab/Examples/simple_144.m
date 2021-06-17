@@ -1,6 +1,6 @@
 %% parameters
 fold_angle = 0;
-twist_angle = -1.28;
+twist_angle = 0;
 flare_angle = 10;
 drag_mom = 0;
 origin = [0,1.00651180744171,0];
@@ -8,7 +8,7 @@ root_aoa = 0;
 V=18;
 %% get Data
 [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,flare_angle,...
-    origin,root_aoa,V,'Locked', false,'TunnelWalls',false,'include_sweep',true,...
+    origin,root_aoa,V,'Locked', true,'TunnelWalls',false,'include_sweep',true,...
     'fwt_cl_factor',1.12,'Silent',false);
 % [data,p_data,f_data] = get_trim_data(fold_angle,twist_angle,flare_angle,origin,root_aoa,...
 %         V,'DragMoment',drag_mom,'WingtipCamber',0,'TunnelWalls',true,...
